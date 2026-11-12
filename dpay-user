@@ -1,1 +1,587 @@
+import 'package:flutter/material.dart';
 
+void main() {
+  runApp(const DPayApp());
+}
+
+const orange = Color(0xFFF36B21);
+const dark = Color(0xFF20232B);
+const background = Color(0xFFF5F6F8);
+
+class DPayApp extends StatelessWidget {
+  const DPayApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'D-Pay',
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: background,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: orange,
+          primary: orange,
+        ),
+        fontFamily: 'Roboto',
+      ),
+      home: const MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int selectedIndex = 0;
+
+  final List<Widget> pages = const [
+    HomePage(),
+    DataPage(),
+    HistoryPage(),
+    ProfilePage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: pages[selectedIndex],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() => selectedIndex = index);
+        },
+        indicatorColor: orange.withOpacity(0.15),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home, color: orange),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.wifi),
+            label: 'Data',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long),
+            label: 'History',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// HOME PAGE
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: orange.withOpacity(.15),
+                child: const Icon(Icons.account_balance_wallet,
+                    color: orange),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Welcome back,',
+                        style: TextStyle(color: Colors.grey)),
+                    Text('D-Pay User',
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.notifications_none),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 25),
+
+          // WALLET CARD
+
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: dark,
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Total Wallet Balance',
+                  style: TextStyle(color: Colors.white70),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  '₦25,000.00',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.add),
+                        label: const Text('Fund Wallet'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: orange,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.history,
+                          color: Colors.white),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          const Text(
+            'Our Services',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            childAspectRatio: 1.35,
+            children: [
+              ServiceCard(
+                title: 'Buy Data',
+                icon: Icons.wifi,
+                color: Colors.blue,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const DataPage(),
+                  ),
+                ),
+              ),
+              ServiceCard(
+                title: 'Buy Airtime',
+                icon: Icons.phone_android,
+                color: Colors.green,
+                onTap: () => showMessage(context, 'Airtime coming soon'),
+              ),
+              ServiceCard(
+                title: 'Cable TV',
+                icon: Icons.tv,
+                color: Colors.purple,
+                onTap: () => showMessage(context, 'Cable TV coming soon'),
+              ),
+              ServiceCard(
+                title: 'Electricity',
+                icon: Icons.bolt,
+                color: Colors.orange,
+                onTap: () => showMessage(context, 'Electricity coming soon'),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 28),
+
+          const Text(
+            'Recent Activity',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          const ActivityTile(
+            title: 'Wallet Funding',
+            subtitle: 'Demo transaction',
+            amount: '+₦5,000',
+            icon: Icons.add_circle,
+            color: Colors.green,
+          ),
+          const ActivityTile(
+            title: 'Data Subscription',
+            subtitle: 'Demo transaction',
+            amount: '-₦1,000',
+            icon: Icons.wifi,
+            color: orange,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// SERVICE CARD
+
+class ServiceCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const ServiceCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 30),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// DATA PAGE
+
+class DataPage extends StatefulWidget {
+  const DataPage({super.key});
+
+  @override
+  State<DataPage> createState() => _DataPageState();
+}
+
+class _DataPageState extends State<DataPage> {
+  String network = 'MTN';
+  String selectedPlan = '';
+  final phoneController = TextEditingController();
+
+  final Map<String, List<String>> plans = {
+    'MTN': ['500MB - ₦500', '1GB - ₦1,000', '2GB - ₦2,000'],
+    'Airtel': ['500MB - ₦450', '1GB - ₦900', '2GB - ₦1,800'],
+    'Glo': ['1GB - ₦500', '2GB - ₦1,000', '5GB - ₦2,500'],
+    '9mobile': ['1GB - ₦1,000', '2GB - ₦2,000'],
+  };
+
+  @override
+  void dispose() {
+    phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Buy Data',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: background,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          const Text(
+            'Select Network',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+          ),
+          const SizedBox(height: 15),
+
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: plans.keys.map((item) {
+              final selected = network == item;
+              return ChoiceChip(
+                label: Text(item),
+                selected: selected,
+                selectedColor: orange.withOpacity(.2),
+                onSelected: (_) {
+                  setState(() {
+                    network = item;
+                    selectedPlan = '';
+                  });
+                },
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: 28),
+
+          const Text(
+            'Phone Number',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+
+          TextField(
+            controller: phoneController,
+            keyboardType: TextInputType.phone,
+            maxLength: 11,
+            decoration: InputDecoration(
+              hintText: 'Enter phone number',
+              prefixIcon: const Icon(Icons.phone),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          const Text(
+            'Select Data Plan',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+          ),
+
+          const SizedBox(height: 15),
+
+          ...plans[network]!.map((plan) {
+            return Card(
+              color: Colors.white,
+              child: RadioListTile<String>(
+                value: plan,
+                groupValue: selectedPlan,
+                activeColor: orange,
+                title: Text(plan),
+                onChanged: (value) {
+                  setState(() => selectedPlan = value!);
+                },
+              ),
+            );
+          }),
+
+          const SizedBox(height: 25),
+
+          SizedBox(
+            height: 54,
+            child: ElevatedButton(
+              onPressed: () {
+                if (phoneController.text.length != 11 ||
+                    selectedPlan.isEmpty) {
+                  showMessage(context,
+                      'Enter a valid phone number and select a plan');
+                  return;
+                }
+
+                showDialog(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: const Text('Confirm Purchase'),
+                    content: Text(
+                      'Network: $network\n'
+                      'Phone: ${phoneController.text}\n'
+                      'Plan: $selectedPlan\n\n'
+                      'This is a demo. No payment will be made.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.pop(dialogContext),
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                          showMessage(context,
+                              'Demo only. Connect a real VTU API to purchase.');
+                        },
+                        child: const Text('Continue'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: orange,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              child: const Text(
+                'Continue',
+                style: TextStyle(fontSize: 17),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// HISTORY PAGE
+
+class HistoryPage extends StatelessWidget {
+  const HistoryPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Transaction History')),
+      body: const Center(
+        child: Text('Your transactions will appear here.'),
+      ),
+    );
+  }
+}
+
+// PROFILE PAGE
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('My Profile')),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: const [
+          CircleAvatar(
+            radius: 40,
+            child: Icon(Icons.person, size: 40),
+          ),
+          SizedBox(height: 15),
+          Center(
+            child: Text(
+              'D-Pay User',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          SizedBox(height: 25),
+          ListTile(
+            leading: Icon(Icons.person_outline),
+            title: Text('Personal Information'),
+          ),
+          ListTile(
+            leading: Icon(Icons.security),
+            title: Text('Security'),
+          ),
+          ListTile(
+            leading: Icon(Icons.help_outline),
+            title: Text('Help & Support'),
+          ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Settings'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ACTIVITY TILE
+
+class ActivityTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String amount;
+  final IconData icon;
+  final Color color;
+
+  const ActivityTile({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.amount,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color.withOpacity(.12),
+          child: Icon(icon, color: color),
+        ),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: Text(
+          amount,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+}
+
+void showMessage(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message)),
+  );
+}
